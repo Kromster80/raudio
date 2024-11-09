@@ -185,8 +185,20 @@ typedef struct tagBITMAPINFOHEADER {
 #include <string.h>                     // Required for: strcmp() [Used in IsFileExtension(), LoadWaveFromMemory(), LoadMusicStreamFromMemory()]
 
 #if defined(RAUDIO_STANDALONE)
+    // Custom logging to txt
+    void CustomTraceLog(const char* message, ...) {
+        FILE* logFile = fopen("raudio_log.txt", "a");
+        if (logFile) {
+            va_list args;
+            va_start(args, message);
+            vfprintf(logFile, message + '\n', args);
+            va_end(args);
+            fclose(logFile);
+        }
+    }
     #ifndef TRACELOG
         #define TRACELOG(level, ...)    printf(__VA_ARGS__)
+        //#define TRACELOG(level, msg, ...) CustomTraceLog(msg, __VA_ARGS__)
     #endif
 
     // Allow custom memory allocators
